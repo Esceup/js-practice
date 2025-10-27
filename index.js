@@ -69,7 +69,6 @@ function renderCandidates() {
   const letters = Object.keys(candidatesData.allCandidates);
   console.log(letters);
   const half = Math.ceil(letters.length / 2);
-  console.log(half);
 
   letters.forEach((letter, index) => {
     const letterItem = document.createElement("li");
@@ -159,7 +158,7 @@ btnAdd.addEventListener("click", function () {
 
 
   
-  if (!name || name.length <= 3) {
+  if (!name || name.length <= 3 || candidatesData.allCandidates.includes(name[0])) {
     
     inputName.classList.toggle("error");
     inputName.value = ''
