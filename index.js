@@ -158,18 +158,32 @@ btnAdd.addEventListener("click", function () {
 
 
   
-  if (!name || name.length <= 3 || candidatesData.allCandidates.includes(name[0])) {
-    
+  if (!name || name.length <= 3) {
     inputName.classList.toggle("error");
-    inputName.value = ''
+    inputName.value = "";
     inputName.placeholder = "Некорректное имя";
-   
+
     setTimeout(() => {
       inputName.classList.toggle("error");
       inputName.placeholder = "Введите имя";
     }, 3000);
 
     hasError = true;
+  } else {
+    const firstLetter = name[0].toUpperCase();
+
+    if (!candidatesData.allCandidates.hasOwnProperty(firstLetter)) {
+      inputName.classList.toggle("error");
+      inputName.value = "";
+      inputName.placeholder = "Используйте кириллицу";
+
+      setTimeout(() => {
+        inputName.classList.toggle("error");
+        inputName.placeholder = "Введите имя";
+      }, 3000);
+
+      hasError = true;
+    }
   }
 
   if (!vacancy || vacancy.length < 3) {
@@ -288,6 +302,14 @@ function editCandidate(candidateId) {
       alert('Некорректное имя')
       return
     }
+     
+    const newFirstLetter = newName[0].toUpperCase();
+
+    if (!candidatesData.allCandidates.hasOwnProperty(newFirstLetter)) {
+      alert('Используйте кириллицу');
+      return;
+    }
+
     if (!newVacancy || newVacancy.length <= 3) {
       alert("Некорректное имя");
       return;
@@ -296,8 +318,6 @@ function editCandidate(candidateId) {
       alert("Некорректное имя");
       return;
     }
-
-    const newFirstLetter = newName[0].toUpperCase()
 
     if (foundLetter !== newFirstLetter) {
       delete candidatesData.allCandidates[foundLetter][candidateId];
@@ -313,10 +333,6 @@ function editCandidate(candidateId) {
       foundCandidate.vacancy = newVacancy;
       foundCandidate.phone = newPhone;
     }
-
-
-
-
 
     if(modalTop.classList.contains('active')) {
       modalEdit.classList.remove('active')
@@ -336,14 +352,16 @@ function editCandidate(candidateId) {
 }
 
 function deleteAllCandidates() {
+  if(!confirm("Вы уверены, что хотите удалить всех кандидатов?")) {
+    return
+  }
+
   for (let letter in candidatesData.allCandidates) {
-    for (let candidate in candidatesData.allCandidates[letter]) {
-        delete candidatesData.allCandidates[letter][candidate];
-        saveToLocalStorage();
-        renderCandidates();
-        return; 
-    }
+    candidatesData.allCandidates[letter] = {}
   } 
+  saveToLocalStorage();
+  renderCandidates();
+  return; 
 }
 
 
